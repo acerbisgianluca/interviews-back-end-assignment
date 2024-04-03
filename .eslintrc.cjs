@@ -10,8 +10,9 @@ module.exports = {
         'plugin:@typescript-eslint/recommended',
         'prettier',
         'plugin:prettier/recommended',
+        'plugin:drizzle/recommended'
     ],
-    plugins: ['@typescript-eslint'],
+    plugins: ['@typescript-eslint', 'drizzle'],
     rules: {
         '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
     },
