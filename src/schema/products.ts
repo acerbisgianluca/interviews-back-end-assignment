@@ -1,6 +1,7 @@
 import { text, integer, sqliteTable, real } from 'drizzle-orm/sqlite-core';
 import { categories } from './categories.ts';
 import { relations } from 'drizzle-orm';
+import { ordersToProducts } from './ordersToProducts.ts';
 
 export const products = sqliteTable('products', {
     id: integer('id').primaryKey(),
@@ -13,9 +14,10 @@ export const products = sqliteTable('products', {
         .notNull(),
 });
 
-export const productsRelations = relations(products, ({ one }) => ({
+export const productsRelations = relations(products, ({ one, many }) => ({
     category: one(categories, {
         fields: [products.category],
         references: [categories.id],
     }),
+    ordersToProducts: many(ordersToProducts),
 }));
