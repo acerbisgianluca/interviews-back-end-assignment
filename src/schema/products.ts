@@ -7,7 +7,7 @@ export const products = sqliteTable('products', {
     name: text('name').notNull(),
     imageUrl: text('image_url'),
     price: real('price').notNull(),
-    quantity: integer('quantity').notNull(),
+    stockQuantity: integer('stock_quantity').notNull(),
     category: integer('category_id')
         .references(() => categories.id)
         .notNull(),

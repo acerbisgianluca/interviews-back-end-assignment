@@ -121,9 +121,9 @@ components:
           type: number
           format: float
           description: The product price.
-        quantity:
+        stockQuantity:
           type: integer
-          description: The product quantity.
+          description: The product stock quantity.
         category:
           type: integer
           description: The category ID.
@@ -136,7 +136,7 @@ components:
         - id
         - name
         - price
-        - quantity
+        - stockQuantity
         - category
       example:
         id: 1

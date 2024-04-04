@@ -8,10 +8,10 @@ export const categories = new Elysia({
 })
     .use(setup)
     .get('/', async () => {
-        const categories = await CategoryService.getAllCategoriesWithProductQuantity();
+        const categories = await CategoryService.getAllCategoriesWithProductStockQuantity();
 
         return {
-            results: categories,
+            result: categories,
             size: categories.length,
         };
     });
