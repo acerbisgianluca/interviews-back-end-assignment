@@ -2,9 +2,12 @@ import { db } from '../libs/database.ts';
 import { categories } from '../schema/categories.ts';
 import { count, eq } from 'drizzle-orm';
 import { products } from '../schema/products.ts';
+import type { CategoryWithProductStockQuantity } from '../models/category.ts';
 
 export abstract class CategoryService {
-    public static getAllCategoriesWithProductQuantity() {
+    public static getAllCategoriesWithProductStockQuantity(): Promise<
+        CategoryWithProductStockQuantity[]
+    > {
         return db
             .select({
                 id: categories.id,

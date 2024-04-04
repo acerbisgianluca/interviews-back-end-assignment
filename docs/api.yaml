@@ -17,6 +17,16 @@ paths:
       parameters:
         - $ref: '#/components/parameters/paginationOffset'
         - $ref: '#/components/parameters/paginationLimit'
+        - in: query
+          name: cid
+          schema:
+            type: integer
+          description: The category ID to filter the products.
+        - in: query
+          name: q
+          schema:
+            type: string
+          description: The search term to filter the products (by name).
       responses:
         '200':
           description: A list of products.
@@ -25,7 +35,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  results:
+                  result:
                     type: array
                     items:
                       $ref: '#/components/schemas/Product'
@@ -33,10 +43,36 @@ paths:
                     type: integer
                     description: The number of products in the result set.
                 required:
-                  - results
+                  - result
                   - size
         '422':
           $ref: '#/components/responses/ValidationError'
+  /products/{productId}:
+    get:
+      summary: Get a product by ID
+      operationId: getProductById
+      description: Get a product by its ID.
+      tags:
+        - Products
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          schema:
+            type: integer
+          description: The product ID.
+      responses:
+        '200':
+          description: A product.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    $ref: '#/components/schemas/Product'
+                required:
+                  - result
   /categories:
     get:
       summary: Get all categories
@@ -52,7 +88,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  results:
+                  result:
                     type: array
                     items:
                       allOf:
@@ -68,7 +104,7 @@ paths:
                     type: integer
                     description: The number of categories in the result set.
                 required:
-                  - results
+                  - result
                   - size
 components:
   parameters:
@@ -121,9 +157,9 @@ components:
           type: number
           format: float
           description: The product price.
-        quantity:
+        stockQuantity:
           type: integer
-          description: The product quantity.
+          description: The product stock quantity.
         category:
           type: integer
           description: The category ID.
@@ -136,7 +172,7 @@ components:
         - id
         - name
         - price
-        - quantity
+        - stockQuantity
         - category
       example:
         id: 1
