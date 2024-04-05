@@ -6,8 +6,12 @@ import { orders } from './orders.ts';
 export const ordersToProducts = sqliteTable(
     'orders_to_products',
     {
-        productId: integer('product_id').notNull(),
-        orderId: integer('order_id').notNull(),
+        productId: integer('product_id')
+            .references(() => products.id)
+            .notNull(),
+        orderId: integer('order_id')
+            .references(() => orders.id)
+            .notNull(),
         quantity: integer('quantity').notNull(),
     },
     (t) => ({

@@ -30,7 +30,10 @@ export abstract class PaymentService {
 
         return {
             transactionId: randomUUID(),
-            status: Math.random() > 0.5 ? 'approved' : 'declined',
+            status:
+                processPaymentRequest.cardDetails.cardNumber === '1111111111111111'
+                    ? 'approved'
+                    : 'declined',
         };
     }
 }

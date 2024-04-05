@@ -12,7 +12,11 @@ export const orders = new Elysia({
         '/',
         async ({ body, set, error }) => {
             try {
-                const order = await OrderService.createOrder(body.items, body.cardDetails);
+                const order = await OrderService.createOrder(
+                    body.items,
+                    body.cardDetails,
+                    body.rewardPoints,
+                );
 
                 set.status = 201;
                 return {

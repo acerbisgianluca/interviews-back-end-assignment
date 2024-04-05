@@ -6,11 +6,18 @@ import { products } from '../schema/products.ts';
 import { and, eq, gte, sql } from 'drizzle-orm';
 import type { CardDetails } from '../models/payment.ts';
 import { PaymentService } from './payment.ts';
+import { RewardService } from './reward.ts';
+import { rewards } from '../schema/rewards.ts';
 
 export abstract class OrderService {
-    public static async createOrder(items: CartItem[], cardDetails: CardDetails): Promise<Order> {
+    public static async createOrder(
+        items: CartItem[],
+        cardDetails: CardDetails,
+        rewardPoints: number = 0,
+    ): Promise<Order> {
         return db.transaction(async (tx) => {
-            let amount = 0;
+            let amount = 0,
+                extraRewardPoints = 0;
             for (const item of items) {
                 const [product] = await tx
                     .update(products)
@@ -21,7 +28,11 @@ export abstract class OrderService {
                             gte(products.stockQuantity, item.quantity),
                         ),
                     )
-                    .returning({ id: products.id, price: products.price });
+                    .returning({
+                        id: products.id,
+                        price: products.price,
+                        extraRewardPoints: products.extraRewardPoints,
+                    });
                 if (!product) {
                     throw new Error(
                         `Product with ID ${item.productId} is not available in the required quantity`,
@@ -29,6 +40,19 @@ export abstract class OrderService {
                 }
 
                 amount += product.price * item.quantity;
+                extraRewardPoints += product.extraRewardPoints * item.quantity;
+            }
+
+            let usedRewardPoints = 0;
+            if (rewardPoints >= 25) {
+                const availableRewardPoints = await RewardService.getRewardsBalance();
+                if (rewardPoints > availableRewardPoints) {
+                    throw new Error('Insufficient reward points');
+                }
+
+                const rewardPointsToEuro = Math.floor(rewardPoints / 25);
+                usedRewardPoints = Math.min(amount, rewardPointsToEuro) * 25;
+                amount = Math.max(0, amount - rewardPointsToEuro);
             }
 
             const paymentResponse = await PaymentService.processPayment({
@@ -45,6 +69,13 @@ export abstract class OrderService {
                     },
                 ])
                 .returning();
+
+            if (usedRewardPoints > 0) {
+                await tx.insert(rewards).values([{ amount: -usedRewardPoints, orderId: order.id }]);
+            }
+            await tx
+                .insert(rewards)
+                .values([{ amount: Math.floor(amount + extraRewardPoints), orderId: order.id }]);
 
             if (paymentResponse.status === 'declined') {
                 throw new Error('Payment declined');

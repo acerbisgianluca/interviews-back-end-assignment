@@ -136,6 +136,11 @@ paths:
                       - quantity
                 cardDetails:
                   $ref: '#/components/schemas/CardDetails'
+                rewardPoints:
+                  type: integer
+                  description: The reward points to use for the order.
+                  minimum: 0
+                  default: 0
               required:
                 - items
                 - cardDetails
@@ -165,6 +170,26 @@ paths:
                     example: 'An error occurred while processing the order.'
                 required:
                   - error
+  /rewards:
+    get:
+      summary: Get the reward points balance
+      operationId: getRewardPointsBalance
+      description: Get the reward points balance.
+      tags:
+        - Rewards
+      responses:
+        '200':
+          description: The reward points balance.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: integer
+                    description: The reward points balance.
+                required:
+                  - result
 components:
   parameters:
     paginationOffset:
@@ -191,7 +216,8 @@ components:
       properties:
         cardNumber:
           type: string
-          description: The card number.
+          description: The card number. Must be 16 digits. If this is set to `1111111111111111`, the payment will succeed, otherwise it will fail.
+          example: 1111111111111111
         expiryMonth:
           type: string
           format: 01-12

@@ -13,5 +13,6 @@ export type CartItem = Static<typeof cartItem>;
 
 export const orderRequestBody = t.Object({
     items: t.Array(cartItem, { minItems: 1 }),
+    rewardPoints: t.Optional(t.Numeric({ minimum: 0 })),
     cardDetails,
 });
