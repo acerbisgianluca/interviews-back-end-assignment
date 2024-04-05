@@ -8,6 +8,7 @@ import type { CardDetails } from '../models/payment.ts';
 import { PaymentService } from './payment.ts';
 import { RewardService } from './reward.ts';
 import { rewards } from '../schema/rewards.ts';
+import { DiscountService } from './discount.ts';
 
 export abstract class OrderService {
     public static async createOrder(
@@ -39,7 +40,11 @@ export abstract class OrderService {
                     );
                 }
 
-                amount += product.price * item.quantity;
+                const discount = await DiscountService.getActiveDiscountByProductId(product.id);
+
+                amount +=
+                    (discount ? (product.price * discount.amount) / 100 : product.price) *
+                    item.quantity;
                 extraRewardPoints += product.extraRewardPoints * item.quantity;
             }
 

@@ -5,8 +5,16 @@ import * as categories from '../schema/categories.ts';
 import * as orders from '../schema/orders.ts';
 import * as ordersToProducts from '../schema/ordersToProducts.ts';
 import * as rewards from '../schema/rewards.ts';
+import * as discounts from '../schema/discounts.ts';
 
 const sqlite = new Database('data/sqlite.db');
 export const db = drizzle(sqlite, {
-    schema: { ...products, ...categories, ...orders, ...ordersToProducts, ...rewards },
+    schema: {
+        ...products,
+        ...categories,
+        ...orders,
+        ...ordersToProducts,
+        ...rewards,
+        ...discounts,
+    },
 });

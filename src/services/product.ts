@@ -1,6 +1,7 @@
 import type { Product, ProductFilterOptions } from '../models/product.ts';
 import { db } from '../libs/database.ts';
 import type { PaginationOptions } from '../models/pagination.ts';
+import { sql } from 'drizzle-orm';
 
 export abstract class ProductService {
     public static getAllAvailableProducts(
@@ -24,6 +25,12 @@ export abstract class ProductService {
 
                 return and(...conditions);
             },
+            with: {
+                discounts: {
+                    where: (discounts, { between }) =>
+                        between(sql`unixepoch()`, discounts.startDate, discounts.endDate),
+                },
+            },
             limit,
             offset,
         });
@@ -32,6 +39,12 @@ export abstract class ProductService {
     public static getProductById(id: number): Promise<Product | undefined> {
         return db.query.products.findFirst({
             where: (products, { eq }) => eq(products.id, id),
+            with: {
+                discounts: {
+                    where: (discounts, { between }) =>
+                        between(sql`unixepoch()`, discounts.startDate, discounts.endDate),
+                },
+            },
         });
     }
 }
