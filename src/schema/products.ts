@@ -12,6 +12,7 @@ export const products = sqliteTable('products', {
     category: integer('category_id')
         .references(() => categories.id)
         .notNull(),
+    extraRewardPoints: integer('extra_reward_points').notNull().default(0),
 });
 
 export const productsRelations = relations(products, ({ one, many }) => ({
