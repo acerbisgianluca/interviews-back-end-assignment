@@ -191,7 +191,8 @@ components:
       properties:
         cardNumber:
           type: string
-          description: The card number.
+          description: The card number. Must be 16 digits. If this is set to `1111111111111111`, the payment will succeed, otherwise it will fail.
+          example: 1111111111111111
         expiryMonth:
           type: string
           format: 01-12
