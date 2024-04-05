@@ -38,7 +38,7 @@ paths:
                   result:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Product'
+                      $ref: '#/components/schemas/ProductWithActiveDiscounts'
                   size:
                     type: integer
                     description: The number of products in the result set.
@@ -70,7 +70,7 @@ paths:
                 type: object
                 properties:
                   result:
-                    $ref: '#/components/schemas/Product'
+                    $ref: '#/components/schemas/ProductWithActiveDiscounts'
                 required:
                   - result
   /categories:
@@ -311,6 +311,48 @@ components:
         quantity: 100
         imageUrl: null
         category: 2
+    Discount:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The discount ID.
+          readOnly: true
+        amount:
+          type: integer
+          description: The discount amount.
+          minimum: 0
+          maximum: 100
+        start_date:
+          type: string
+          format: date-time
+          description: The start date of the discount.
+        end_date:
+          type: string
+          format: date-time
+          description: The end date of the discount.
+        product_id:
+          type: integer
+          description: The product ID.
+      required:
+        - id
+        - amount
+        - start_date
+        - end_date
+        - product_id
+    ProductWithActiveDiscounts:
+      allOf:
+        - $ref: '#/components/schemas/Product'
+        - type: object
+          properties:
+            discounts:
+              type: array
+              description: The active discounts for the product.
+              items:
+                $ref: '#/components/schemas/Discount'
+          required:
+            - discounts
   responses:
     ValidationError:
       description: The parameters or the body of the request are invalid.
