@@ -6,13 +6,14 @@
     "build": "bun build src/index.ts --outdir ./out --target=bun --sourcemap=external --minify",
     "start": "NODE_ENV=production bun src/index.ts",
     "test": "bun test",
-    "lint": "eslint src --fix --ext .ts",
+    "lint": "eslint src test --fix --ext .ts",
     "studio": "drizzle-kit studio",
     "push": "drizzle-kit push:sqlite",
     "studio:test": "bun run studio -- --config ./drizzle.config.dev.ts",
     "push:test": "bun run push -- --config ./drizzle.config.dev.ts"
   },
   "dependencies": {
+    "@elysiajs/eden": "^1.0.11",
     "drizzle-orm": "^0.30.6",
     "drizzle-typebox": "^0.1.1",
     "elysia": "^1.0.11",
