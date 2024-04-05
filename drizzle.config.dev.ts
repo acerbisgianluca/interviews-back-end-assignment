@@ -5,6 +5,6 @@ export default {
     out: "drizzle",
     driver: 'better-sqlite',
     dbCredentials: {
-        url: 'data/production.db',
+        url: 'data/test.db',
     }
 } satisfies Config;

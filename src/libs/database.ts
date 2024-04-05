@@ -7,7 +7,7 @@ import * as ordersToProducts from '../schema/ordersToProducts.ts';
 import * as rewards from '../schema/rewards.ts';
 import * as discounts from '../schema/discounts.ts';
 
-const sqlite = new Database('data/sqlite.db');
+const sqlite = new Database(Bun.env['SQLITE_FILE_PATH']);
 export const db = drizzle(sqlite, {
     schema: {
         ...products,
