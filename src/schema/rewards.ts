@@ -11,7 +11,7 @@ export const rewards = sqliteTable('rewards', {
 });
 
 export const rewardsRelations = relations(rewards, ({ one }) => ({
-    orders: one(orders, {
+    order: one(orders, {
         fields: [rewards.orderId],
         references: [orders.id],
     }),

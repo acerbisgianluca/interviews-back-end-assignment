@@ -2,6 +2,7 @@ import { text, integer, sqliteTable, real } from 'drizzle-orm/sqlite-core';
 import { categories } from './categories.ts';
 import { relations } from 'drizzle-orm';
 import { ordersToProducts } from './ordersToProducts.ts';
+import { discounts } from './discounts.ts';
 
 export const products = sqliteTable('products', {
     id: integer('id').primaryKey(),
@@ -21,4 +22,5 @@ export const productsRelations = relations(products, ({ one, many }) => ({
         references: [categories.id],
     }),
     ordersToProducts: many(ordersToProducts),
+    discounts: many(discounts),
 }));
