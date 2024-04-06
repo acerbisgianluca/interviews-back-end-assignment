@@ -26,8 +26,6 @@ export abstract class PaymentService {
     public static async processPayment(
         processPaymentRequest: ProcessPaymentRequest,
     ): Promise<ProcessPaymentResponse> {
-        console.info('Processing payment...', processPaymentRequest);
-
         return {
             transactionId: randomUUID(),
             status:

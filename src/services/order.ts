@@ -42,9 +42,8 @@ export abstract class OrderService {
                 }
 
                 const discount = await DiscountService.getActiveDiscountByProductId(product.id);
-
                 amount +=
-                    (discount ? (product.price * discount.amount) / 100 : product.price) *
+                    (discount ? (product.price - (product.price * discount.amount / 100)) : product.price) *
                     item.quantity;
                 extraRewardPoints += product.extraRewardPoints * item.quantity;
             }

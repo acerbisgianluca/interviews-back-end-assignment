@@ -10,8 +10,8 @@ export const discounts = sqliteTable(
             .references(() => products.id)
             .notNull(),
         amount: integer('amount').notNull(),
-        startDate: integer('start_date', { mode: 'timestamp' }).notNull(),
-        endDate: integer('end_date', { mode: 'timestamp' }).notNull(),
+        startDate: integer('start_date', { mode: 'timestamp_ms' }).notNull(),
+        endDate: integer('end_date', { mode: 'timestamp_ms' }).notNull(),
     },
     (t) => ({
         unq: unique().on(t.productId, t.startDate, t.endDate),
