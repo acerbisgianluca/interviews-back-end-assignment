@@ -36,7 +36,7 @@ beforeAll(async () => {
             },
             {
                 name: 'Harry Potter',
-                price: 25,
+                price: 100,
                 stockQuantity: 50,
                 categoryId: createdCategories[1].id,
                 extraRewardPoints: 10,
@@ -48,8 +48,8 @@ beforeAll(async () => {
         {
             productId: createdProducts[1].id,
             amount: 10,
-            startDate: sql`datetime('2024-01-01')`,
-            endDate: sql`datetime('2024-12-31')`,
+            startDate: sql`unixepoch('2024-01-01')`,
+            endDate: sql`unixepoch('2024-12-31')`,
         },
     ]);
 });
