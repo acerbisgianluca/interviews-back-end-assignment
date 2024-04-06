@@ -4,6 +4,7 @@
   "scripts": {
     "dev": "bun --watch src/index.ts",
     "build": "bun build src/index.ts --outdir ./out --target=bun --sourcemap=external --minify",
+    "build:node": "bun run build -- --target=node",
     "start": "NODE_ENV=production bun src/index.ts",
     "test": "bun test",
     "lint": "eslint src test --fix --ext .ts",
