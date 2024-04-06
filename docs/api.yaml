@@ -1,0 +1,383 @@
+openapi: 3.0.3
+info:
+  title: FreshCart Market API
+  description: FreshCart Market API documentation
+  version: 1.0.0
+servers:
+  - url: 'http://localhost:3000/api'
+    description: Local server
+paths:
+  /products:
+    get:
+      summary: Get all available products
+      operationId: getAllAvailableProducts
+      description: Get all available products (quantity > 0).
+      tags:
+        - Products
+      parameters:
+        - $ref: '#/components/parameters/paginationOffset'
+        - $ref: '#/components/parameters/paginationLimit'
+        - in: query
+          name: cid
+          schema:
+            type: integer
+          description: The category ID to filter the products.
+        - in: query
+          name: q
+          schema:
+            type: string
+          description: The search term to filter the products (by name).
+      responses:
+        '200':
+          description: A list of products.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProductWithActiveDiscounts'
+                  size:
+                    type: integer
+                    description: The number of products in the result set.
+                    example: 1
+                required:
+                  - result
+                  - size
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /products/{productId}:
+    get:
+      summary: Get a product by ID
+      operationId: getProductById
+      description: Get a product by its ID.
+      tags:
+        - Products
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          schema:
+            type: integer
+          description: The product ID.
+      responses:
+        '200':
+          description: A product.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    $ref: '#/components/schemas/ProductWithActiveDiscounts'
+                required:
+                  - result
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /categories:
+    get:
+      summary: Get all categories
+      operationId: getAllCategories
+      description: Get all categories with the number of products assigned to them.
+      tags:
+        - Categories
+      responses:
+        '200':
+          description: A list of categories.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: array
+                    items:
+                      allOf:
+                        - $ref: '#/components/schemas/Category'
+                        - type: object
+                          properties:
+                            numOfProducts:
+                              type: integer
+                              description: The number of products assigned to the category.
+                          required:
+                            - numOfProducts
+                  size:
+                    type: integer
+                    description: The number of categories in the result set.
+                required:
+                  - result
+                  - size
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /orders:
+    post:
+      summary: Create a new order
+      operationId: createOrder
+      description: Create a new order.
+      tags:
+        - Orders
+      requestBody:
+        description: The order to create.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                items:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: object
+                    properties:
+                      productId:
+                        type: integer
+                      quantity:
+                        type: integer
+                    required:
+                      - productId
+                      - quantity
+                cardDetails:
+                  $ref: '#/components/schemas/CardDetails'
+                rewardPoints:
+                  type: integer
+                  description: The reward points to use for the order.
+                  minimum: 0
+                  default: 0
+              required:
+                - items
+                - cardDetails
+      responses:
+        '201':
+          description: The order has been created successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    $ref: '#/components/schemas/Order'
+                required:
+                  - result
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /rewards:
+    get:
+      summary: Get the reward points balance
+      operationId: getRewardPointsBalance
+      description: Get the reward points balance.
+      tags:
+        - Rewards
+      responses:
+        '200':
+          description: The reward points balance.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: integer
+                    description: The reward points balance.
+                required:
+                  - result
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+components:
+  parameters:
+    paginationOffset:
+      in: query
+      name: offset
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+      description: The number of items to skip before starting to collect the result set.
+    paginationLimit:
+      in: query
+      name: limit
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        default: 25
+      description: The numbers of items to return.
+  schemas:
+    CardDetails:
+      type: object
+      properties:
+        cardNumber:
+          type: string
+          description: The card number. Must be 16 digits. If this is set to `1111111111111111`, the payment will succeed, otherwise it will fail.
+          example: 1111111111111111
+        expiryMonth:
+          type: string
+          format: 01-12
+          description: The card expiration month (MM).
+        expiryYear:
+          type: string
+          format: 0000-9999
+          description: The card expiration year (YYYY).
+        cvv:
+          type: string
+          format: 000-999
+          description: The card CVV (XXX).
+      required:
+        - cardNumber
+        - expiryMonth
+        - expiryYear
+        - cvv
+    Order:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The order ID.
+          readOnly: true
+        amount:
+          type: number
+          format: float
+          description: The total amount of the order.
+          readOnly: true
+        transactionId:
+          type: string
+          description: The transaction ID.
+          format: uuid
+          readOnly: true
+        createdAt:
+          type: string
+          format: date-time
+          description: The creation date and time of the order.
+          readOnly: true
+      required:
+        - id
+        - amount
+        - transactionId
+        - createdAt
+    Category:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The category ID.
+          readOnly: true
+        name:
+          type: string
+          description: The category name.
+          example: Fruits
+      required:
+        - id
+        - name
+    Product:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The product ID.
+          readOnly: true
+        name:
+          type: string
+          description: The product name.
+        price:
+          type: number
+          format: float
+          description: The product price.
+        stockQuantity:
+          type: integer
+          description: The product stock quantity.
+        categoryId:
+          type: integer
+          description: The category ID.
+        imageUrl:
+          type: string
+          format: uri
+          description: The image url.
+          nullable: true
+      required:
+        - id
+        - name
+        - price
+        - stockQuantity
+        - categoryId
+      example:
+        id: 1
+        name: Apple
+        price: 1.99
+        quantity: 100
+        imageUrl: null
+        category: 2
+    Discount:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The discount ID.
+          readOnly: true
+        amount:
+          type: integer
+          description: The discount amount.
+          minimum: 0
+          maximum: 100
+        startDate:
+          type: string
+          format: date-time
+          description: The start date of the discount.
+        endDate:
+          type: string
+          format: date-time
+          description: The end date of the discount.
+        productId:
+          type: integer
+          description: The product ID.
+      required:
+        - id
+        - amount
+        - startDate
+        - endDate
+        - productId
+    ProductWithActiveDiscounts:
+      allOf:
+        - $ref: '#/components/schemas/Product'
+        - type: object
+          properties:
+            discounts:
+              type: array
+              description: The active discounts for the product.
+              items:
+                $ref: '#/components/schemas/Discount'
+          required:
+            - discounts
+          example:
+            discounts: [ ]
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+  responses:
+    ValidationError:
+      description: The parameters or the body of the request are invalid.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    InternalServerError:
+      description: The server failed to process the request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+security: [ ]

@@ -87,4 +87,24 @@ Update the system to include this information in the whole process.
 
 ## How to run
 
-...
+- Install [Bun](https://bun.sh/).
+- Clone this repository and navigate to the root folder.
+- Run `bun install --frozen-lockfile`.
+- Create `./data` folder in the root directory of the project.
+
+### How to run the tests
+
+- Run `bun run push:test`: creates the test database file (`./data/test.db`).
+- Run `bun run studio:test`: launch an instance of [Drizzle Studio](https://orm.drizzle.team/drizzle-studio/overview) to interact with the test database.
+- In another shell tab, run `bun test`.
+
+### How to run the application
+
+- Run `bun run push`: creates the production database file (`./data/production.db`).
+- Run `bun run studio`: launch an instance of [Drizzle Studio](https://orm.drizzle.team/drizzle-studio/overview) to interact with the production database.
+- In another shell tab, run `bun run start`.
+
+> It isn't required to build/bundle the code before running it, but if you want to, you can run `bun run build` which creates a single `index.js` file in the `/out` folder.
+> You can then run the application with `bun out/index.js`.
+> 
+> If you want to target `node` instead, run `bun run build:node`.
