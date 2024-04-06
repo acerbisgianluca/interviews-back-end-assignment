@@ -1,17 +1,19 @@
 import { Elysia } from 'elysia';
-import { setup } from '../setup.ts';
 import { CategoryService } from '../services/category.ts';
+import { createResponseArrayDataSchema, createResponseData } from '../models/response.ts';
+import { categoryWithProductStockQuantitySchema } from '../models/category.ts';
 
-export const categories = new Elysia({
-    name: 'Controller.Categories',
+export const categoryController = new Elysia({
+    name: 'Controller.Category',
     prefix: '/categories',
-})
-    .use(setup)
-    .get('/', async () => {
+}).get(
+    '/',
+    async () => {
         const categories = await CategoryService.getAllCategoriesWithProductStockQuantity();
 
-        return {
-            result: categories,
-            size: categories.length,
-        };
-    });
+        return createResponseData(categories);
+    },
+    {
+        response: createResponseArrayDataSchema(categoryWithProductStockQuantitySchema),
+    },
+);

@@ -1,5 +1,5 @@
 declare module 'bun' {
-    type Env = {
+    interface Env {
         SQLITE_FILE_PATH: string;
-    };
+    }
 }

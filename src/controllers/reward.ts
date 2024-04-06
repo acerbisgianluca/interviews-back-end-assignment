@@ -1,16 +1,19 @@
 import { Elysia } from 'elysia';
-import { setup } from '../setup.ts';
 import { RewardService } from '../services/reward.ts';
+import { createResponseData, createResponseDataSchema } from '../models/response.ts';
+import { rewardBalanceSchema } from '../models/reward.ts';
 
-export const rewards = new Elysia({
-    name: 'Controller.Rewards',
+export const rewardController = new Elysia({
+    name: 'Controller.Reward',
     prefix: '/rewards',
-})
-    .use(setup)
-    .get('/', async () => {
+}).get(
+    '/',
+    async () => {
         const balance = await RewardService.getRewardsBalance();
 
-        return {
-            result: balance,
-        };
-    });
+        return createResponseData(balance);
+    },
+    {
+        response: createResponseDataSchema(rewardBalanceSchema),
+    },
+);

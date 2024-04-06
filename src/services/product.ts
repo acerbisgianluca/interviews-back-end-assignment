@@ -16,7 +16,7 @@ export abstract class ProductService {
                 const conditions = [gt(products.stockQuantity, 0)];
 
                 if (filterOptions.cid !== undefined) {
-                    conditions.push(eq(products.category, filterOptions.cid));
+                    conditions.push(eq(products.categoryId, filterOptions.cid));
                 }
 
                 if (filterOptions.q !== undefined && filterOptions.q.length > 0) {

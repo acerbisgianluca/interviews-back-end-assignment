@@ -31,14 +31,14 @@ beforeAll(async () => {
                 name: 'Apple',
                 price: 1.5,
                 stockQuantity: 100,
-                category: createdCategories[0].id,
+                categoryId: createdCategories[0].id,
                 extraRewardPoints: 0,
             },
             {
                 name: 'Harry Potter',
                 price: 25,
                 stockQuantity: 50,
-                category: createdCategories[1].id,
+                categoryId: createdCategories[1].id,
                 extraRewardPoints: 10,
             },
         ])

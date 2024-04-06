@@ -1,9 +1,8 @@
 import type { Config } from "drizzle-kit";
+import productionConfig from './drizzle.config.ts';
 
 export default {
-    schema: "src/schema/*.ts",
-    out: "drizzle",
-    driver: 'better-sqlite',
+    ...productionConfig,
     dbCredentials: {
         url: 'data/test.db',
     }

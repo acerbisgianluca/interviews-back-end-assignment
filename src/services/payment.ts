@@ -15,7 +15,7 @@ export abstract class PaymentService {
                 }
             });
 
-            return response.json();
+            return await response.json() as ProcessPaymentResponse | ProcessPaymentErrorResponse;
         } catch(err) {
             console.error('Error processing payment', err);
 

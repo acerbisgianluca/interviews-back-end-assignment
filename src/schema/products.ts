@@ -10,7 +10,7 @@ export const products = sqliteTable('products', {
     imageUrl: text('image_url'),
     price: real('price').notNull(),
     stockQuantity: integer('stock_quantity').notNull(),
-    category: integer('category_id')
+    categoryId: integer('category_id')
         .references(() => categories.id)
         .notNull(),
     extraRewardPoints: integer('extra_reward_points').notNull().default(0),
@@ -18,7 +18,7 @@ export const products = sqliteTable('products', {
 
 export const productsRelations = relations(products, ({ one, many }) => ({
     category: one(categories, {
-        fields: [products.category],
+        fields: [products.categoryId],
         references: [categories.id],
     }),
     ordersToProducts: many(ordersToProducts),

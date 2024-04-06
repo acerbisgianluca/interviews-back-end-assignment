@@ -15,7 +15,7 @@ export abstract class CategoryService {
                 numOfProducts: count(products.id),
             })
             .from(categories)
-            .leftJoin(products, eq(categories.id, products.category))
+            .leftJoin(products, eq(categories.id, products.categoryId))
             .groupBy(categories.id, categories.name);
     }
 }

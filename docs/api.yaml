@@ -42,11 +42,14 @@ paths:
                   size:
                     type: integer
                     description: The number of products in the result set.
+                    example: 1
                 required:
                   - result
                   - size
         '422':
           $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
   /products/{productId}:
     get:
       summary: Get a product by ID
@@ -73,6 +76,8 @@ paths:
                     $ref: '#/components/schemas/ProductWithActiveDiscounts'
                 required:
                   - result
+        '500':
+          $ref: '#/components/responses/InternalServerError'
   /categories:
     get:
       summary: Get all categories
@@ -106,6 +111,8 @@ paths:
                 required:
                   - result
                   - size
+        '500':
+          $ref: '#/components/responses/InternalServerError'
   /orders:
     post:
       summary: Create a new order
@@ -128,7 +135,7 @@ paths:
                     type: object
                     properties:
                       productId:
-                        $ref: '#/components/schemas/Product'
+                        type: integer
                       quantity:
                         type: integer
                     required:
@@ -159,17 +166,7 @@ paths:
         '422':
           $ref: '#/components/responses/ValidationError'
         '500':
-          description: An error occurred while processing the order.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: 'An error occurred while processing the order.'
-                required:
-                  - error
+          $ref: '#/components/responses/InternalServerError'
   /rewards:
     get:
       summary: Get the reward points balance
@@ -190,6 +187,8 @@ paths:
                     description: The reward points balance.
                 required:
                   - result
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 components:
   parameters:
     paginationOffset:
@@ -253,10 +252,16 @@ components:
           description: The transaction ID.
           format: uuid
           readOnly: true
+        createdAt:
+          type: string
+          format: date-time
+          description: The creation date and time of the order.
+          readOnly: true
       required:
         - id
         - amount
         - transactionId
+        - createdAt
     Category:
       type: object
       properties:
@@ -290,7 +295,7 @@ components:
         stockQuantity:
           type: integer
           description: The product stock quantity.
-        category:
+        categoryId:
           type: integer
           description: The category ID.
         imageUrl:
@@ -303,7 +308,7 @@ components:
         - name
         - price
         - stockQuantity
-        - category
+        - categoryId
       example:
         id: 1
         name: Apple
@@ -324,23 +329,23 @@ components:
           description: The discount amount.
           minimum: 0
           maximum: 100
-        start_date:
+        startDate:
           type: string
           format: date-time
           description: The start date of the discount.
-        end_date:
+        endDate:
           type: string
           format: date-time
           description: The end date of the discount.
-        product_id:
+        productId:
           type: integer
           description: The product ID.
       required:
         - id
         - amount
-        - start_date
-        - end_date
-        - product_id
+        - startDate
+        - endDate
+        - productId
     ProductWithActiveDiscounts:
       allOf:
         - $ref: '#/components/schemas/Product'
@@ -353,12 +358,26 @@ components:
                 $ref: '#/components/schemas/Discount'
           required:
             - discounts
+          example:
+            discounts: [ ]
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
   responses:
     ValidationError:
       description: The parameters or the body of the request are invalid.
       content:
-        text/plain:
+        application/json:
           schema:
-            type: string
-            example: 'Invalid parameters or request body.'
+            $ref: '#/components/schemas/Error'
+    InternalServerError:
+      description: The server failed to process the request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
 security: [ ]

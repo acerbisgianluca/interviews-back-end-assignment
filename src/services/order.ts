@@ -34,6 +34,7 @@ export abstract class OrderService {
                         price: products.price,
                         extraRewardPoints: products.extraRewardPoints,
                     });
+
                 if (!product) {
                     throw new Error(
                         `Product with ID ${item.productId} is not available in the required quantity`,

@@ -12,7 +12,4 @@ module.exports = {
         'plugin:prettier/recommended',
     ],
     plugins: ['@typescript-eslint'],
-    rules: {
-        '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
-    },
 };
