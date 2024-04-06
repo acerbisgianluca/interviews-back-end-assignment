@@ -87,9 +87,10 @@ Update the system to include this information in the whole process.
 
 ## How to run
 
-- Install [Bun](https://bun.sh/)
-- Clone this repository and navigate to the root folder
-- Run `bun install --frozen-lockfile`
+- Install [Bun](https://bun.sh/).
+- Clone this repository and navigate to the root folder.
+- Run `bun install --frozen-lockfile`.
+- Create `./data` folder in the root directory of the project.
 
 ### How to run the tests
 
